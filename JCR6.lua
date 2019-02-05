@@ -96,6 +96,18 @@ local class_JCRDir = {
       
 }
 
+local compression_drivers = {}
+
+function JCR_RegisterCompression(name,driver)
+    assert(type(name)=="string","Driver name MUST be a string!")
+    assert(type(driver)=="table","Driver must be a table!")
+    assert(type(driver.compress)=="function","Function expected for compress field, but I received "..type(driver.compress))
+    assert(type(driver.expand  )=="function","Function expected for expand   field, but I received "..type(driver.expand))
+    compression_drivers[name] = driver
+end
+
+local function FAKESTORE(a) return a end -- Since no compression is done is store, just return what we got.
+JCR_RegisterCompression("Store",{ compress=FAKESTORE, expand=FAKESTORE })    
 
 local function jnew(class)
     local ret = {}
