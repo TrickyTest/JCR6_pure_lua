@@ -41,3 +41,7 @@ luac.out
 
 # Ignore Unix hidden files
 .*
+
+# Ignore MKL files
+*MKL*
+MKL*
