@@ -20,6 +20,21 @@
 
 -- Main
 
+JCR_Crash = true -- When set to true a crash will occur when an error pops up
+JCR_Caught = {}  -- Contains all errors caught (only used when JCR_Crash is false)
+
+function JCR_error(a)
+     if JCR_Crash then error(a) end
+     print("JCR6 Error: "..a)
+     JCR_Caught[#JCR_Caught+1] = a
+end
+
+function JCR_assert(c,a)
+     if not c then JCR_error(a) end
+end     
+
+
+
 --[[ These are integer readers.
      A way to read and write integers, written by Tom N Harris.
   ]] 
@@ -106,7 +121,7 @@ function JCR_RegisterCompression(name,driver)
     compression_drivers[name] = driver
 end
 
-local function FAKESTORE(a) return a end -- Since no compression is done is store, just return what we got.
+local function FAKESTORE(a) return a,#a end -- Since no compression is done is store, just return what we got.
 JCR_RegisterCompression("Store",{ compress=FAKESTORE, expand=FAKESTORE })    
 
 local function jnew(class)
