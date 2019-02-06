@@ -155,14 +155,14 @@ local class_JCRDir = {
       Get = function(self,Entry)
             local e = self.Entries[Entry:upper()]
             if not JCR_assert(e,sprintf("Entry \"%s\" not found",Entry)) then return nil end
-            local bt = fopen(e.MainFile,"rb")
-            if not JCR_assert(bt,sprintf("Mainfile \"%s\" cannot be opened in order to read entry \"%s\"",e.MainFile,Entry)) then return nil end
+            local bt = fopen(e.Mainfile,"rb")
+            if not JCR_assert(bt,sprintf("Mainfile \"%s\" cannot be opened in order to read entry \"%s\"",e.Mainfile,Entry)) then return nil end
             bt:seek("set",e.Offset)
-            local cbuffer = e:read(e.Compressedsize)
+            local cbuffer = bt:read(e.Compressedsize)
             bt:close()
             local unpack = compression_drivers[e.Storage]
-            if not JCR_Assert(unpack,"Unsupported compression method: "..e.Storage) then return nil end
-            return unpack.expand(cbuffer)
+            if not JCR_assert(unpack,"Unsupported compression method: "..e.Storage) then return nil end
+            return unpack.expand(cbuffer,e.Size)
       end,
       
       Open = function(self,Entry)
