@@ -205,5 +205,9 @@ function JCR_Recognize(file)
  end local Recognize = JCR_Recognize
          
 
-
+function JCR_Dir(file)
+    local dirdriver = Recognize(file)
+    if not JCR_assert(dirdriver,("File %s could not be recognized with any driver!"):format(file)) then return nil end
+    return dir_drivers[dirdriver].dir(file),dirdriver
+end
 
