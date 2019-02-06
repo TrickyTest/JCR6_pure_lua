@@ -1,7 +1,7 @@
 --[[
   JCR6.lua
   
-  version: 19.02.05
+  version: 19.02.06
   Copyright (C) 2019 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -32,6 +32,9 @@ end
 function JCR_assert(c,a)
      if not c then JCR_error(a) end
 end     
+
+
+
 
 
 
@@ -112,6 +115,7 @@ local class_JCRDir = {
 }
 
 local compression_drivers = {}
+local dir_drivers = {}
 
 function JCR_RegisterCompression(name,driver)
     assert(type(name)=="string","Driver name MUST be a string!")
@@ -119,6 +123,14 @@ function JCR_RegisterCompression(name,driver)
     assert(type(driver.compress)=="function","Function expected for compress field, but I received "..type(driver.compress))
     assert(type(driver.expand  )=="function","Function expected for expand   field, but I received "..type(driver.expand))
     compression_drivers[name] = driver
+end
+
+function JCR_RegisterDir(driver)
+    assert(type(driver)=="table",("Driver must be a table and not be a %s!"):format(type(driver)))
+    assert(type(driver.recognize)=='table',("Driver recognize must be a function and not be a %s"):format(type(driver.recognize)))
+    assert(type(driver.dir)=='table',("Driver recognize must be a function and not be a %s!"):format(type(driver.dir)))
+    assert(type(driver.name)=='string',("Driver name must be a string and not be a %s!"):format(type(driver.name)))
+    dir_drivers[#dir_drivers+1]=driver
 end
 
 local function FAKESTORE(a) return a,#a end -- Since no compression is done is store, just return what we got.
