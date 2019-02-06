@@ -209,6 +209,7 @@ local class_textbuff = {
     size = function(self) return #self.str end,
     eof = function(self) return self.pos>=#self.str end,
     Raw = function(self,s)
+           chat("Buufer-reading "..s.." bytes")
            local p = self.pos + 1
            local r = self.str:sub(p,self.pos+s)
            self.pos = self.pos + s
