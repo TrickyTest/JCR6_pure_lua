@@ -112,6 +112,7 @@ end
 -- The 2nd local definition is because locals are said to be faster than globals, but I *do* want the functions to be callable by scripts calling this library!
 function RAW_ReadInt(stream)
      local s = stream:read(4)
+     for i=1,4 do io.write(s.byte(i).."/") end print(" read => "..stringtonumber(s)) -- debug
      return stringtonumber(s)
 end local RAW_ReadInt = RAW_ReadInt
 
@@ -253,19 +254,19 @@ local JCR6_DirDriver = {
              -- ret.Vars = map[string]string{}
              -- ret.Comments = map[string]string{}
              local bt = fopen(file,"rb") -- bt, e := os.Open(file)
-             if not JCR_assert(bt,("file %f could not be opened for reading!"):format(file)) then return end -- qerr.QERR(e)
+             if not JCR_assert(bt,("file %s could not be opened for reading!"):format(file)) then return end -- qerr.QERR(e)
              if RAW_ReadString(bt, 5) ~= "JCR6\x1a" then
                    error("YIKES!!! A NONE JCR6 FILE!!!! HELP! HELP! I'M DYING!!!") -- This error should NEVER be possible!
              end
-             FAToffset = RAW_ReadInt(bt)
+             ret.FAToffset = RAW_ReadInt(bt)
              if ret.FAToffset <= 0 then
                  JCR_error( "Invalid FAT offset. Maybe you are trying to read a JCR6 file that has never been properly finalized" )
                  bt:close()
                  return nil
              end
              chat(sprintf("FAT Offest %i", ret.FAToffset))
-             TTag = 0 --    var TTag byte
-             Tag = "" --var Tag string
+             local TTag = 0 --    var TTag byte
+             local Tag = "" --var Tag string
              TTag = RAW_ReadByte(bt)
              while TTag ~= 255 do
                    Tag = RAW_ReadString(bt)
@@ -468,14 +469,14 @@ JCR_RegisterDir(JCR6_DirDriver)
 function JCR_Recognize(file)
     local r
     for _,d in ipairs(dir_drivers) do
-        if d.recognize(file) then return d.name end
+        if d.recognize(file) then return d.name,d end
     end
  end local Recognize = JCR_Recognize
          
 
 function JCR_Dir(file)
-    local dirdriver = Recognize(file)
+    local dirdriver,driver = Recognize(file)
     if not JCR_assert(dirdriver,("File %s could not be recognized with any driver!"):format(file)) then return nil end
-    return dir_drivers[dirdriver].dir(file),dirdriver
+    return driver.dir(file),dirdriver
 end
 
