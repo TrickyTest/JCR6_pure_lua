@@ -123,7 +123,7 @@ end local RAW_ReadString = RAW_ReadString
 
 function RAW_Read(stream)
     local s = stream:read(1)
-    return s:byte(s,1,1)
+    return s:byte(1,1)
 end local RAW_Read = RAW_Read
 local RAW_ReadByte = RAW_Read
 
