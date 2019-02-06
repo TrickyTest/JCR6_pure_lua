@@ -125,6 +125,7 @@ function RAW_Read(stream)
     local s = stream:read(1)
     return s:byte(s,1,1)
 end local RAW_Read = RAW_Read
+local RAW_ReadByte = RAW_Read
 
 function RAW_ReadBoolean(stream)
     return RAW_Read(stream)>0
