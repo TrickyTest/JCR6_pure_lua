@@ -39,6 +39,7 @@ end
 
 
 
+
 --[[ These are integer readers.
      A way to read and write integers, written by Tom N Harris.
   ]] 
@@ -90,6 +91,30 @@ end
 --[[
    Lua does not support classes, but this will help me to 'fake' a class
 ]]   
+
+-- Raw file read functions
+-- The 2nd local definition is because locals are said to be faster than globals, but I *do* want the functions to be callable by scripts calling this library!
+function RAW_ReadInt(stream)
+     local s = stream:read(4)
+     return stringtonumber(s)
+end local RAW_ReadInt = RAW_ReadInt
+
+function RAW_ReadString(stream,length)
+     length = length or RAW_ReadInt(stream)
+     return stream:read(length)
+end local RAW_ReadString = RAW_ReadString
+
+function RAW_Read(stream)
+    local s = stream:read(1)
+    return s:byte(s,1,1)
+end local RAW_Read = RAW_Read
+
+function RAW_ReadBoolean(stream)
+    return RAW_Read(stream)>0
+end local RAW_ReadBoolean = RAW_ReadBoolean    
+
+
+-- "classes"
 local class_JCRDir = {
       Entries = "@newtable",
       MainConfig = "@newtable",
@@ -149,4 +174,11 @@ end
 function newJCRDir() return jnew(class_JCRDir) end
 
 
+local JCR6_DirDriver = {
+
+          name = "JCR6",
+          
+          
+
+}
 
