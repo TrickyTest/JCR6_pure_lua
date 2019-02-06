@@ -228,6 +228,7 @@ local class_textbuff = {
 -- Read string as file
 function bytes_NewReader(string)
     local ret = jnew(class_textbuff)
+    return ret
 end    
 
 
