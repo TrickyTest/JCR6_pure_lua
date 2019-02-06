@@ -34,17 +34,18 @@
       compress = function(src)
            local pack = zlib.deflate(9) -- 9 for maximal compression has always been the standard for JCR6
            local retstring,eof,bi,bo = pack(src,'finish')
-           if JCR_assert(eof,"zlib: eof = false") then return end
-           if JCR_assert(bi==#src,"zlib: Source count error") then return end
-           if JCR_assert(bo==#retstring,"zlib: Pack count error") then return end
+           if not JCR_assert(eof,"zlib: eof = false") then return end
+           if not JCR_assert(bi==#src,"zlib: Source count error") then return end
+           if not JCR_assert(bo==#retstring,"zlib: Pack count error") then return end
            return retstring,bo
       end,
       
       expand = function(src,size)
            local unpack = zlib.inflate()
            local retstring,eof,bi,bo = unpack(src)
-           if JCR_assert(bo==size,("Unpack size mismatch! Size returned doesn't match the size expected\n%d != %d\n%s\n"):format(bo,size,retstring)) then return end
-           if JCR_assert(bo==#retstring,"Unpack size error! Unpacked returns different size than the data actually is") then return end
+           if not JCR_assert(bo==size,("Unpack size mismatch! Size returned doesn't match the size expected\n%d != %d\n%s\n"):format(bo,size,retstring)) then return end
+           if not JCR_assert(bo==#retstring,"Unpack size error! Unpacked returns different size than the data actually is") then return end
+           -- print("Unpacked to "..(#retstring).." bytes") -- debug
            return retstring
       end      
   
