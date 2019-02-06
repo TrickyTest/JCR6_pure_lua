@@ -35,7 +35,8 @@ function JCR_assert(c,a)
 end     
 
 
-
+-- A few globals converted to locals for speed
+local fopen = io.open
 
 
 
@@ -153,8 +154,8 @@ end
 
 function JCR_RegisterDir(driver)
     assert(type(driver)=="table",("Driver must be a table and not be a %s!"):format(type(driver)))
-    assert(type(driver.recognize)=='table',("Driver recognize must be a function and not be a %s"):format(type(driver.recognize)))
-    assert(type(driver.dir)=='table',("Driver recognize must be a function and not be a %s!"):format(type(driver.dir)))
+    assert(type(driver.recognize)=='function',("Driver recognize must be a function and not be a %s"):format(type(driver.recognize)))
+    assert(type(driver.dir)=='function',("Driver dir must be a function and not be a %s!"):format(type(driver.dir)))
     assert(type(driver.name)=='string',("Driver name must be a string and not be a %s!"):format(type(driver.name)))
     dir_drivers[#dir_drivers+1]=driver
 end
@@ -176,9 +177,33 @@ function newJCRDir() return jnew(class_JCRDir) end
 
 local JCR6_DirDriver = {
 
-          name = "JCR6",
+          name = "JCR6",          
           
+          recognize = function(file)
+             local bt = fopen(file,"rb")
+             local head = RAW_ReadString(bt,5)
+             -- print("head = "..head)
+             bt:close()
+             return head=="JCR6"..string.char(26)
+          end,
+          
+          dir = function(file)
+             -- content comes later
+          end
           
 
 }
+
+JCR_RegisterDir(JCR6_DirDriver)
+
+-- Returns the name of the driver recognizing the file, and returns "nil" if not recognized
+function JCR_Recognize(file)
+    local r
+    for _,d in ipairs(dir_drivers) do
+        if d.recognize(file) then return d.name end
+    end
+ end local Recognize = JCR_Recognize
+         
+
+
 
