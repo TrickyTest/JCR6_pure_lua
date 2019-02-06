@@ -4,7 +4,7 @@ local io = io
 local pairs = pairs
 local print = print
 
-JCR_Chat = true -- This is a test after all!
+-- JCR_Chat = true -- This is a test after all!
 
 print("Reading")
 local d = JCR_Dir("MKL_test.jcr") -- I didn't include this file in the repository for obvious reasons, I believe :P
@@ -20,7 +20,7 @@ local function serie(t,tabs)
         for i=1,tabs do io.write("\t") end
         io.write( ("%s %s = "):format(type(v),k) )
         if type(v)=="table" then
-           print("")
+           print("{}")
            serie(v,tabs+1)
         elseif type(v)=="function" then
            print("< FUNC >")
@@ -28,8 +28,11 @@ local function serie(t,tabs)
            print(v)
         end         
     end
-    print("")
+    -- print("")
 end
+
+
+serie(d)
 
 for e in d:EntryList() do
     print(e)
