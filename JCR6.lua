@@ -316,7 +316,7 @@ local JCR6_DirDriver = {
                 return nil
              end
              fatbytes=compression_drivers[ret.FATstorage].expand(fatcbytes,ret.FATsize)
-             if len(fatbytes)~=ret.FATsize then
+             if #fatbytes~=ret.FATsize then
                 printf("WARNING!!!\nSize after unpacking does NOT match the size written inside the JCR6 file.\nSize is %d and it must be %d\nErrors can be expected!\n",len(fatbytes),ret.FATsize)
              end
              --    //fatbuffer:=bytes.NewBuffer(fatbytes)

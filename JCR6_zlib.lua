@@ -42,8 +42,8 @@
       
       expand = function(src,size)
            local unpack = zlib.inflate()
-           local retstring,eof,bi,bo = unpack()
-           if JCR_assert(bo==size,"Unpack size mismatch! Size returned doesn't match the size expected") then return end
+           local retstring,eof,bi,bo = unpack(src)
+           if JCR_assert(bo==size,("Unpack size mismatch! Size returned doesn't match the size expected\n%d != %d\n%s\n"):format(bo,size,retstring)) then return end
            if JCR_assert(bo==#retstring,"Unpack size error! Unpacked returns different size than the data actually is") then return end
            return retstring
       end      
