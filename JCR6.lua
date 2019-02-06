@@ -209,7 +209,7 @@ local class_textbuff = {
     size = function(self) return #self.str end,
     eof = function(self) return self.pos>=#self.str end,
     Raw = function(self,s)
-           chat("Buufer-reading "..s.." bytes")
+           chat("Buffer-reading "..s.." bytes")
            local p = self.pos + 1
            local r = self.str:sub(p,self.pos+s)
            self.pos = self.pos + s
@@ -217,18 +217,19 @@ local class_textbuff = {
           end,
     ReadByte = function(self) return(self:Raw(1):byte()) end,           
     ReadInt = function(self)
-          local b = Raw(4)
+          local b = self:Raw(4)
           return stringtonumber(b)
          end,       
     ReadString = function(self,size) 
           size = size or self:ReadInt()
-          return Raw(size)
+          return self:Raw(size)
          end 
 }
 
 -- Read string as file
 function bytes_NewReader(string)
     local ret = jnew(class_textbuff)
+    ret.str=string
     return ret
 end    
 
@@ -324,6 +325,10 @@ local JCR6_DirDriver = {
              --    //fatbuffer:=bytes.NewBuffer(fatbytes)
              local btf = bytes_NewReader(fatbytes)
              -- qff.DEOF=false
+             chat("Let's start!")
+             chat(("btf:eof()  >> %s"):format(btf:eof()))
+             chat(("theend %s"):format(theend))
+             chat(("Size of bytes %d"):format(#fatbytes))
              while (not btf:eof()) and (not theend) do
                   local mtag = btf:ReadByte()
                   local ppp,_ = btf.pos -- :=btf.Seek(0,1)
@@ -361,7 +366,7 @@ local JCR6_DirDriver = {
                                  local vi = btf:ReadInt()
                                  chats("integer key %s",ki)
                                  chats("integer value %d",vi)
-                                 newentry.Dataint[ki] = int(vi)
+                                 newentry.Dataint[ki] = vi
                               --            case 255:
                               --            default:
                               elseif ftag==255 then 
