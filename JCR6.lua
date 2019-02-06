@@ -31,6 +31,7 @@ end
 
 function JCR_assert(c,a)
      if not c then JCR_error(a) end
+     return c
 end     
 
 
