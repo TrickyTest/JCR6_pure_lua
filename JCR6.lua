@@ -142,7 +142,11 @@ local function jnew(class)
     for k,v in pairs(class) do
         if v=="@newtable" then ret[k]={} else ret[k]=v end
     end
+    if ret.constructor then ret.constructor() end
     return ret
 end
 
 function newJCRDir() return jnew(class_JCRDir) end
+
+
+
