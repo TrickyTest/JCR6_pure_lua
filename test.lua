@@ -60,7 +60,7 @@ end
 
 print(d:Get("ReadMe.md"))
 
-local bt = d:Open('JCR6.lua')
+local bt = d:Open('Readme.md')
 while not bt:eof() do
       io.write(("\27[3%d;4%dm%s"):format(bt.pos % 8,7 - (bt.pos % 8),bt:ReadString(1)))
 end
