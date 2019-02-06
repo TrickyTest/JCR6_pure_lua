@@ -25,6 +25,10 @@ JCR_Caught = {}  -- Contains all errors caught (only used when JCR_Crash is fals
 JCR_Chat = false -- When set true some debug info could be displayed
 
 
+local compression_drivers = {}
+local dir_drivers = {}
+
+
 local function chat(a)
      if JCR_Chat then print(("DEBUG: %s"):format(a)) end
 end
@@ -42,7 +46,7 @@ end
 function JCR_assert(c,a)
      if not c then JCR_error(a) end
      return c
-end     
+end local JCR_assert = JCR_assert     
 
 
 -- A few globals converted to locals for speed
@@ -148,8 +152,24 @@ local class_JCRDir = {
       FATcsize = 0,
       FATstorage = "Store",
       
-      Get = function(self,Entry) 
-      -- Will be used to read an entry
+      Get = function(self,Entry)
+            local e = self.Entries[Entry:upper()]
+            if not JCR_assert(e,sprintf("Entry \"%s\" not found",Entry)) then return nil end
+            local bt = fopen(e.MainFile,"rb")
+            if not JCR_assert(bt,sprintf("Mainfile \"%s\" cannot be opened in order to read entry \"%s\"",e.MainFile,Entry)) then return nil end
+            bt:seek("set",e.Offset)
+            local cbuffer = e:read(e.Compressedsize)
+            bt:close()
+            local unpack = compression_drivers[e.Storage]
+            if not JCR_Assert(unpack,"Unsupported compression method: "..e.Storage) then return nil end
+            return unpack.expand(cbuffer)
+      end,
+      
+      Open = function(self,Entry)
+             local e = self:Get(Entry)
+             if not e then return nil end
+             local r = bytes_NewReader(e)
+             return r
       end,
       
       Patch = function(self,PatchJCR)
@@ -169,8 +189,6 @@ local class_JCRDir = {
       
 }
 
-local compression_drivers = {}
-local dir_drivers = {}
 
 function JCR_RegisterCompression(name,driver)
     assert(type(name)=="string","Driver name MUST be a string!")
