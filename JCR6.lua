@@ -180,7 +180,7 @@ local JCR6_DirDriver = {
           name = "JCR6",          
           
           recognize = function(file)
-             local bt = fopen(file,"rb")
+             local bt = fopen(file,"rb"); if not bt then return nil end
              local head = RAW_ReadString(bt,5)
              -- print("head = "..head)
              bt:close()
