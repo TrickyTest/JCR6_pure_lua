@@ -112,7 +112,7 @@ end
 -- The 2nd local definition is because locals are said to be faster than globals, but I *do* want the functions to be callable by scripts calling this library!
 function RAW_ReadInt(stream)
      local s = stream:read(4)
-     for i=1,4 do io.write(s.byte(i).."/") end print(" read => "..stringtonumber(s)) -- debug
+     -- for i=1,4 do io.write(s.byte(i).."/") end print(" read => "..stringtonumber(s)) -- debug
      return stringtonumber(s)
 end local RAW_ReadInt = RAW_ReadInt
 
